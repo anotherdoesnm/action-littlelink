@@ -23,7 +23,7 @@ jobs:
 
           # layout + content
           grep -q '<h1>Fixture</h1>' "$html"
-          test "$(grep -c 'class="button' "$html")" -eq 4
+          test "$(grep -o '<a class="button' "$html" | wc -l)" -eq 4
           grep -q 'class="button button-github"' "$html"
           grep -q 'class="button button-mastodon"' "$html"
 
