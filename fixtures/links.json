@@ -1,0 +1,6 @@
+[
+  { "label": "GitHub",    "url": "https://github.com/example", "brand": "github",    "icon": "github" },
+  { "label": "Mastodon",  "url": "https://example.org/@fixture", "brand": "mastodon", "icon": "mastodon" },
+  { "label": "Custom",    "url": "https://example.org", "brand": "custom", "icon": "custom", "color": "#123456" },
+  { "label": "No icon",   "url": "https://example.org/two", "brand": "github" }
+]

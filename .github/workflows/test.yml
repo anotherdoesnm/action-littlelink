@@ -1,0 +1,45 @@
+name: test
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Render the fixture with this action
+        uses: ./
+        with:
+          config-dir: fixtures
+          output-dir: out
+
+      - name: Assert the output
+        run: |
+          set -euo pipefail
+          html=fixtures/out/index.html
+          test -s "$html"
+
+          # layout + content
+          grep -q '<h1>Fixture</h1>' "$html"
+          test "$(grep -c 'class="button' "$html")" -eq 4
+          grep -q 'class="button button-github"' "$html"
+          grep -q 'class="button button-mastodon"' "$html"
+
+          # a brand upstream does not know must get a rule from its colour
+          grep -q 'class="button button-custom"' "$html"
+          grep -q '\.button-custom{--button-background:#123456' "$html"
+
+          # avatar inlined, icons deduplicated into symbols
+          grep -q 'data:image/png;base64,' "$html"
+          test "$(grep -c '<symbol id="i-github"' "$html")" -eq 1
+          grep -q '<use href="#i-custom"/>' "$html"
+
+          # links without an icon fall back to a letter badge
+          grep -q 'class="badge"' "$html"
+
+          # and nothing should have been reported missing
+          test -z "$(grep -o 'missing' "$html" || true)"
+
+          echo "fixture ok: $(wc -c < "$html") bytes"

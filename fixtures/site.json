@@ -1,0 +1,10 @@
+{
+  "title": "Fixture",
+  "subtitle": "@fixture@example.org",
+  "avatar": "assets/avatar.png",
+  "footer": "rendered by CI",
+  "footerUrl": "https://example.org",
+  "footerText": "fixture",
+  "lang": "en",
+  "theme": {}
+}
