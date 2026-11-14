@@ -1,0 +1,50 @@
+name: Build LittleLink page
+description: Renders a single self-contained LittleLink-style page from site.json and links.json.
+branding:
+  icon: link
+  color: blue
+
+inputs:
+  config-dir:
+    description: Directory holding site.json and links.json
+    required: false
+    default: .
+  output-dir:
+    description: Where to write index.html
+    required: false
+    default: dist
+  littlelink-ref:
+    description: Commit of sethcottle/littlelink to take css/brands.css from
+    required: false
+    default: 3c9162c9f8324d5e002259ed8b4b3cc377b08486
+  littlelink-extended-ref:
+    description: Commit of sethcottle/littlelink-extended to take css/brands-extended.css from
+    required: false
+    default: d7034f83a6bf71c4a663d2d046a03b37ec74ae45
+
+runs:
+  using: composite
+  steps:
+    - name: Fetch upstream brand stylesheets
+      shell: bash
+      env:
+        LL_REF: ${{ inputs.littlelink-ref }}
+        LLE_REF: ${{ inputs.littlelink-extended-ref }}
+      run: |
+        set -euo pipefail
+        out="$RUNNER_TEMP/littlelink-brands"
+        mkdir -p "$out"
+        # Pinned by commit, not by branch: a page that built yesterday must build
+        # the same way today. Bump the inputs to move both repos forward.
+        curl -fsSL "https://raw.githubusercontent.com/sethcottle/littlelink/${LL_REF}/css/brands.css" -o "$out/main.css"
+        curl -fsSL "https://raw.githubusercontent.com/sethcottle/littlelink-extended/${LLE_REF}/css/brands-extended.css" -o "$out/extended.css"
+        echo "BRANDS_DIR=$out" >> "$GITHUB_ENV"
+        wc -c "$out/main.css" "$out/extended.css"
+
+    - name: Render page
+      shell: bash
+      env:
+        CONFIG_DIR: ${{ inputs.config-dir }}
+        OUTPUT_DIR: ${{ inputs.output-dir }}
+        ACTION_DIR: ${{ github.action_path }}
+      run: node "$ACTION_DIR/ssg/build.mjs"

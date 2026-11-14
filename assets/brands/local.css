@@ -1,0 +1,4 @@
+/* Brands that exist in neither upstream stylesheet. Everything else comes from
+   societycottle/littlelink and littlelink-extended, fetched by action.yml. */
+.button-arcanechat{--button-text:#ffffff;--button-background:#7b00c8}
+.button-email{--button-text:#ffffff;--button-background:#000000;--button-border:1px solid #FFFFFF}
